@@ -134,7 +134,41 @@ adb shell settings get secure user_setup_complete
 
 40. The expected result is device_provisioned=1 and user_setup_complete=1.
 41. If ADB shows unauthorized, return to TWRP and fix /data/misc/adb/adb_keys. Do not waste time trying to tap the hidden authorization prompt on the damaged screen.
-42. Once ADB is authorized, continue the headless-server build: root SSH, Tailscale, Termux or Debian chroot, Hermes/OpenClaw runtime, boot persistence, power management, and health checks.
+42. Push the persistent root SSH module (MagiskSSH) to the phone:
+
+```bash
+adb push dist/magisk_ssh_v0.24.zip /data/local/tmp/magisk_ssh.zip
+```
+
+43. Install the module via Magisk CLI:
+
+```bash
+adb shell "su -c 'magisk --install-module /data/local/tmp/magisk_ssh.zip'"
+```
+
+44. Configure authorized SSH public keys for the root and shell users to prevent lockouts:
+
+```bash
+# Push your PC's public key (e.g. tunnel_key.pub) to the phone
+adb push ~/.ssh/tunnel_key.pub /data/local/tmp/authorized_keys
+
+# Copy to root and shell home directories, set strict ownership/permissions, and cleanup temp file
+adb shell "su -c 'cat /data/local/tmp/authorized_keys > /data/ssh/root/.ssh/authorized_keys && cat /data/local/tmp/authorized_keys > /data/ssh/shell/.ssh/authorized_keys && chown -R 0:0 /data/ssh/root && chmod 700 /data/ssh/root/.ssh && chmod 600 /data/ssh/root/.ssh/authorized_keys && chown -R 2000:2000 /data/ssh/shell && chmod 700 /data/ssh/shell/.ssh && chmod 600 /data/ssh/shell/.ssh/authorized_keys && rm -f /data/local/tmp/authorized_keys'"
+```
+
+45. Reboot the phone to start the native SSH daemon:
+
+```bash
+adb reboot
+```
+
+46. Connect to the device as root using your private key:
+
+```bash
+ssh -i ~/.ssh/tunnel_key root@<device_ip>
+```
+
+47. Once SSH is authorized, continue the headless-server build: Tailscale, Termux or Debian chroot, Hermes/OpenClaw runtime, boot persistence, power management, and health checks.
 
 ## Appendices
 
