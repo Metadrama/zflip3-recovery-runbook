@@ -26,6 +26,9 @@ log() {
   echo "104.21.44.149 packages-cf.termux.dev" >> /data/local/tmp/hosts
   echo "104.16.8.34 registry.npmjs.org" >> /data/local/tmp/hosts
   echo "172.217.25.46 google.com" >> /data/local/tmp/hosts
+  echo "216.239.32.61 antigravity.google" >> /data/local/tmp/hosts
+  echo "34.143.75.2 antigravity-cli-auto-updater-974169037036.us-central1.run.app" >> /data/local/tmp/hosts
+  echo "172.217.25.155 storage.googleapis.com" >> /data/local/tmp/hosts
   chmod 644 /data/local/tmp/hosts
 
   mount -o bind /data/local/tmp/hosts /system/etc/hosts 2>>"$LOG"
