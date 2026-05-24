@@ -1,0 +1,53 @@
+#!/sbin/sh
+
+OUTFD="$2"
+ZIPFILE="$3"
+TMPDIR=/tmp/magisk-module-install
+
+ui_print() {
+  if [ -n "$OUTFD" ] && [ -e "/proc/self/fd/$OUTFD" ]; then
+    echo -e "ui_print $1\nui_print" > "/proc/self/fd/$OUTFD"
+  else
+    echo "$1"
+  fi
+}
+
+abort() {
+  ui_print "ERROR: $1"
+  exit 1
+}
+
+mount_data() {
+  mount /data >/dev/null 2>&1 || true
+  twrp mount data >/dev/null 2>&1 || true
+  [ -d /data ] || abort "/data is not available"
+}
+
+extract_module() {
+  rm -rf "$TMPDIR"
+  mkdir -p "$TMPDIR" || abort "cannot create temp dir"
+  unzip -o "$ZIPFILE" 'module/*' -d "$TMPDIR" >/dev/null 2>&1 || abort "cannot extract module payload"
+  [ -f "$TMPDIR/module/module.prop" ] || abort "module.prop missing"
+}
+
+install_module() {
+  MODID=$(grep '^id=' "$TMPDIR/module/module.prop" | head -n 1 | cut -d= -f2 | tr -d '\r')
+  [ -n "$MODID" ] || abort "module id missing"
+  TARGET="/data/adb/modules/$MODID"
+  rm -rf "$TARGET"
+  mkdir -p "$TARGET" || abort "cannot create $TARGET"
+  cp -af "$TMPDIR/module/." "$TARGET/" || abort "cannot copy module files"
+  chown -R 0:0 "$TARGET" 2>/dev/null || true
+  chmod 0644 "$TARGET/module.prop" 2>/dev/null || true
+  [ -f "$TARGET/service.sh" ] && chmod 0755 "$TARGET/service.sh"
+  [ -f "$TARGET/post-fs-data.sh" ] && chmod 0755 "$TARGET/post-fs-data.sh"
+  rm -f "$TARGET/remove" "$TARGET/disable"
+  ui_print "Installed Magisk module: $MODID"
+}
+
+ui_print "Installing TWRP-staged Magisk module"
+mount_data
+extract_module
+install_module
+ui_print "Done"
+exit 0

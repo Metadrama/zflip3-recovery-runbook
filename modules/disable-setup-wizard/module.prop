@@ -1,0 +1,7 @@
+id=disable-setup-wizard
+name=Disable Setup Wizard
+version=0.1.0
+versionCode=1
+author=aminnur + Hermes
+summary=Marks device provisioning complete and disables Samsung/Google setup wizard packages on boot.
+description=Boot-time Magisk module for damaged-screen Samsung recovery. This module owns setup/provisioning state only; ADB forcing is a separate module.
