@@ -1,0 +1,6 @@
+#!/system/bin/sh
+export PATH="/data/data/com.termux/files/usr/bin:$PATH"
+export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
+export HOME="/data/ssh/root"
+export TERMUX_VERSION="0.118"
+exec node /data/data/com.termux/files/usr/bin/gemini "$@"

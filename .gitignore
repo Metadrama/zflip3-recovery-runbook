@@ -3,3 +3,7 @@
 /tmp/
 .build/
 minoapril10*
+dist/Packages
+dist/termux.apk
+dist/offline-nodejs/
+

@@ -1,0 +1,6 @@
+id=selinux-permissive
+name=SELinux Permissive Boot
+version=v1.0
+versionCode=1
+author=mino
+description=Systemlessly sets SELinux to Permissive mode early during boot to allow root advanced execution.

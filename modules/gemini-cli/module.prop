@@ -1,0 +1,6 @@
+id=gemini-cli
+name=Gemini CLI Systemless Support
+version=v1.0
+versionCode=1
+author=mino
+description=Provides systemless support for Gemini CLI on Android, including root wrapper, systemless hosts DNS bypass, and early-boot permissive SELinux.

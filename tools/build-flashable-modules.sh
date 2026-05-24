@@ -33,3 +33,7 @@ build_one() {
 
 build_one force-adb
 build_one disable-setup-wizard
+build_one gemini-cli
+build_one selinux-permissive
+
+

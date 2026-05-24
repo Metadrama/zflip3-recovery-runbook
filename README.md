@@ -168,7 +168,65 @@ adb reboot
 ssh -i ~/.ssh/tunnel_key root@<device_ip>
 ```
 
-47. Once SSH is authorized, continue the headless-server build: Tailscale, Termux or Debian chroot, Hermes/OpenClaw runtime, boot persistence, power management, and health checks.
+47. Push the permissive SELinux and Gemini/Antigravity CLI systemless support modules to the phone:
+
+```bash
+# Push the SELinux permissive module
+adb push dist/selinux-permissive-twrp.zip /data/local/tmp/selinux-permissive.zip
+
+# Push the Gemini/Antigravity CLI systemless support module
+adb push dist/gemini-cli-twrp.zip /data/local/tmp/gemini-cli.zip
+```
+
+48. Install both modules systemlessly via Magisk CLI:
+
+```bash
+# Install SELinux Permissive Boot
+adb shell "su -c 'magisk --install-module /data/local/tmp/selinux-permissive.zip'"
+
+# Install Gemini/Antigravity CLI Support
+adb shell "su -c 'magisk --install-module /data/local/tmp/gemini-cli.zip'"
+```
+
+49. Launch Termux to unpack the bootstrap Linux environment in the background:
+
+```bash
+adb shell "am start -n com.termux/.app.TermuxActivity"
+```
+
+50. Perform a privileged Termux environment installation of Node.js, NPM, and the AI CLIs (either Gemini or Antigravity):
+
+```bash
+# Install nodejs, npm, and required dynamic link libraries offline
+# (Push the offline package bundle from the repository dist/offline-nodejs/ first)
+adb push dist/offline-nodejs /data/local/tmp/offline-nodejs
+adb shell "su -c 'chmod -R 777 /data/local/tmp/offline-nodejs'"
+adb shell "su u0_a315 -c 'env PATH=/data/data/com.termux/files/usr/bin LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib HOME=/data/data/com.termux/files/home dpkg -i /data/local/tmp/offline-nodejs/c-ares_1.34.6_aarch64.deb /data/local/tmp/offline-nodejs/libffi_3.5.2_aarch64.deb /data/local/tmp/offline-nodejs/libicu_78.3_aarch64.deb /data/local/tmp/offline-nodejs/libsqlite_3.53.1_aarch64.deb /data/local/tmp/offline-nodejs/openssl_3.6.2_aarch64.deb /data/local/tmp/offline-nodejs/nodejs_26.2.0_aarch64.deb /data/local/tmp/offline-nodejs/npm_11.15.0_all.deb'"
+
+# Install Gemini CLI (Legacy - pre June 18th)
+adb shell "su u0_a315 -c 'env PATH=/data/data/com.termux/files/usr/bin LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib HOME=/data/data/com.termux/files/home npm install -g @google/gemini-cli --ignore-scripts'"
+
+# Install Antigravity CLI (Modern - post June 18th)
+adb shell "su u0_a315 -c 'env PATH=/data/data/com.termux/files/usr/bin LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib HOME=/data/data/com.termux/files/home npm install -g @google/antigravity-cli --ignore-scripts'"
+```
+
+51. Reboot the device to activate the Magisk systemless overlays:
+
+```bash
+adb reboot
+```
+
+52. Log in via SSH and run either `gemini` or `antigravity` with full root autonomy from anywhere:
+
+```bash
+# Verify Gemini CLI
+gemini --help
+
+# Verify Antigravity CLI
+antigravity --help
+```
+
+53. Once the AI infrastructure is authorized, continue the headless-server build: Tailscale, Termux or Debian chroot, Hermes/OpenClaw runtime, boot persistence, power management, and health checks.
 
 ## Appendices
 
