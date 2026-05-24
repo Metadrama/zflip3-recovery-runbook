@@ -5,7 +5,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 WORK="$ROOT/.build/module-zips"
 
-command -v zip >/dev/null 2>&1 || { echo "zip is required" >&2; exit 1; }
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON="python3"
+elif command -v python >/dev/null 2>&1; then
+  PYTHON="python"
+else
+  echo "Python is required for portable zipping" >&2
+  exit 1
+fi
 
 rm -rf "$WORK"
 mkdir -p "$DIST" "$WORK"
@@ -20,14 +27,26 @@ build_one() {
   test -f "$src/service.sh" || { echo "missing $src/service.sh" >&2; exit 1; }
 
   mkdir -p "$pkg/module" "$pkg/META-INF/com/google/android"
+  
+  # Copy to root (for Magisk in-OS installer compatibility)
+  cp -a "$src/." "$pkg/"
+  
+  # Copy to module/ (for TWRP update-binary installer compatibility)
   cp -a "$src/." "$pkg/module/"
+  
   cp "$ROOT/installer/update-binary" "$pkg/META-INF/com/google/android/update-binary"
   printf '#MAGISK\n' > "$pkg/META-INF/com/google/android/updater-script"
-  chmod 0755 "$pkg/META-INF/com/google/android/update-binary" "$pkg/module/service.sh"
+  
+  chmod 0755 "$pkg/META-INF/com/google/android/update-binary" "$pkg/service.sh" "$pkg/module/service.sh"
+  if [ -d "$pkg/system/bin" ]; then
+    chmod 0755 "$pkg/system/bin"/*
+  fi
+  if [ -d "$pkg/module/system/bin" ]; then
+    chmod 0755 "$pkg/module/system/bin"/*
+  fi
 
   rm -f "$out"
-  (cd "$pkg" && zip -qr "$out" .)
-  unzip -t "$out" >/dev/null
+  "$PYTHON" "$ROOT/tools/zip_helper.py" "$pkg" "$out"
   echo "built $out"
 }
 

@@ -3,4 +3,14 @@ export PATH="/data/data/com.termux/files/usr/bin:$PATH"
 export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
 export HOME="/data/ssh/root"
 export TERMUX_VERSION="0.118"
-exec node /data/data/com.termux/files/usr/bin/antigravity "$@"
+
+if [ -x /data/data/com.termux/files/usr/bin/antigravity ]; then
+  exec /data/data/com.termux/files/usr/bin/antigravity "$@"
+elif [ -x /data/ssh/root/bin/antigravity ]; then
+  exec /data/ssh/root/bin/antigravity "$@"
+elif [ -f /data/data/com.termux/files/usr/bin/agy ]; then
+  exec node /data/data/com.termux/files/usr/bin/agy "$@"
+else
+  echo "antigravity CLI not installed yet."
+  exit 1
+fi
