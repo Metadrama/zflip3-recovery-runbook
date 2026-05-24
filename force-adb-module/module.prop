@@ -1,0 +1,7 @@
+id=force-adb
+name=Force ADB and Bypass Setup Wizard
+version=0.1.0
+versionCode=1
+author=aminnur + Hermes
+summary=Forces ADB/USB debugging state and disables setup wizard packages on boot for damaged-screen recovery workflows.
+description=Boot-time Magisk module used after TWRP/multidisabler/data-format recovery to keep ADB reachable on a damaged-screen Samsung device.
