@@ -1,16 +1,17 @@
 #!/system/bin/sh
-export PATH="/data/data/com.termux/files/usr/bin:$PATH"
-export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
-export HOME="/data/ssh/root"
-export TERMUX_VERSION="0.118"
+# Systemless Antigravity CLI wrapper - alias for 'agy'
+# This script is overlaid onto /system/bin/antigravity by the gemini-cli Magisk module.
+# It delegates to the same auto-patching VA39 wrapper as /system/bin/agy.
 
-if [ -x /data/data/com.termux/files/usr/bin/antigravity ]; then
-  exec /data/data/com.termux/files/usr/bin/antigravity "$@"
-elif [ -x /data/ssh/root/bin/antigravity ]; then
-  exec /data/ssh/root/bin/antigravity "$@"
-elif [ -f /data/data/com.termux/files/usr/bin/agy ]; then
-  exec node /data/data/com.termux/files/usr/bin/agy "$@"
+WRAPPER="/data/data/com.termux/files/home/.local/bin/agy-va39"
+
+export HOME="${HOME:-/data/ssh/root}"
+export PATH="/data/data/com.termux/files/usr/bin:$PATH"
+
+if [ -x "$WRAPPER" ]; then
+  exec "$WRAPPER" "$@"
 else
-  echo "antigravity CLI not installed yet."
+  echo "antigravity: auto-patching wrapper not found at $WRAPPER"
+  echo "Run the setup from the zflip3-recovery-runbook first."
   exit 1
 fi
