@@ -1,0 +1,6 @@
+id=disable-doze
+name=Disable Android Doze Mode
+version=v1.0
+versionCode=1
+author=Antigravity
+description=Systemlessly disables deep and light Device Idle (Doze) power-saving sleep modes on boot to support headless 24/7 server environments.
