@@ -55,5 +55,6 @@ build_one disable-setup-wizard
 build_one gemini-cli
 build_one selinux-permissive
 build_one disable-doze
+build_one scrcpy-hacks
 
 

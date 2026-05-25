@@ -1,0 +1,4 @@
+#!/system/bin/sh
+cmd device_state state reset
+echo "📡 Server Mode Activated: Cover Screen (Display 1) is now active."
+echo "Connect with: scrcpy --display-id=1"

@@ -1,0 +1,4 @@
+#!/system/bin/sh
+cmd device_state state 3
+echo "💼 Admin Mode Activated: Main Screen (Display 0) is now active."
+echo "Connect with: scrcpy --display-id=0 --turn-screen-off"

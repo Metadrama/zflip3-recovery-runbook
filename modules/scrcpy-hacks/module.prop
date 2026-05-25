@@ -1,0 +1,6 @@
+id=scrcpy-hacks
+name=Scrcpy Headless Support Hacks
+version=v1.0
+versionCode=1
+author=Antigravity
+description=Optimizes the Galaxy Z Flip 3 for headless scrcpy: disables physical touchscreen ghost touches systemlessly, forces screen state to OPENED (unfolded), and locks brightness to minimum.
