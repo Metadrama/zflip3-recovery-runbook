@@ -210,6 +210,13 @@ adb shell "su u0_a315 -c 'env PATH=/data/data/com.termux/files/usr/bin LD_LIBRAR
 adb shell "su u0_a315 -c 'env PATH=/data/data/com.termux/files/usr/bin LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib HOME=/data/data/com.termux/files/home npm install -g @google/antigravity-cli --ignore-scripts'"
 ```
 
+50.5. Deploy the robust dynamic DNS and safe auto-update wrappers from this repository to the phone:
+
+```powershell
+# From the root of this repository on your PC, run the tracked deployment helper:
+.\tools\deploy-termux-bin.ps1
+```
+
 51. Reboot the device to activate the Magisk systemless overlays:
 
 ```bash

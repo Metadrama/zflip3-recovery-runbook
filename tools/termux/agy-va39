@@ -1,0 +1,58 @@
+#!/data/data/com.termux/files/usr/bin/sh
+PRISTINE="/data/ssh/root/.local/bin/agy"
+PATCHED="/data/data/com.termux/files/home/.local/bin/agy.va39"
+PATCHER="/data/data/com.termux/files/home/patch_agy_va39.py"
+
+# Auto-patch if pristine binary is newer than patched binary or patched binary is missing
+if [ ! -f "$PATCHED" ] || [ "$PRISTINE" -nt "$PATCHED" ]; then
+  echo "🔄 Newer official agy binary detected, auto-patching for Android VA39..."
+  /data/data/com.termux/files/usr/bin/python3 "$PATCHER" "$PRISTINE" "$PATCHED"
+  chmod 755 "$PATCHED"
+fi
+
+# Intercept the self-update command to prevent proot dynamic-linker corruption
+# and perform a safe, VA39-compatible binary upgrade instead.
+if [ "$1" = "update" ]; then
+  exec /data/data/com.termux/files/usr/bin/python3 /data/data/com.termux/files/home/update_agy.py
+fi
+
+# Prepare a robust DNS configuration for the proot environment
+CUSTOM_RESOLV_DIR="/data/data/com.termux/files/home/.local/etc"
+CUSTOM_RESOLV="$CUSTOM_RESOLV_DIR/resolv.conf"
+mkdir -p "$CUSTOM_RESOLV_DIR"
+
+# 1. Start with Tailscale MagicDNS so local .ts.net lookups resolve first
+echo "nameserver 100.100.100.100" > "$CUSTOM_RESOLV"
+
+# 2. Dynamically extract the host's actual active DNS servers from Android Connectivity Service
+HOST_DNS=$(dumpsys connectivity 2>/dev/null | grep "DnsAddresses" | head -n 1 | sed 's/.*DnsAddresses: \[ //' | sed 's/ \].*//' | tr ',' ' ')
+
+if [ -n "$HOST_DNS" ]; then
+  for dns in $HOST_DNS; do
+    dns_clean=$(echo "$dns" | sed 's/^\///')
+    if [ -n "$dns_clean" ] && [ "$dns_clean" != "100.100.100.100" ]; then
+      echo "nameserver $dns_clean" >> "$CUSTOM_RESOLV"
+    fi
+  done
+fi
+
+# 3. Append standard public fallbacks as absolute backups
+echo "nameserver 8.8.8.8" >> "$CUSTOM_RESOLV"
+echo "nameserver 1.1.1.1" >> "$CUSTOM_RESOLV"
+# Fast timeout/attempts options for glibc resolver fallback
+echo "options timeout:2 attempts:1" >> "$CUSTOM_RESOLV"
+
+G=/data/data/com.termux/files/usr/glibc/lib
+S=/data/data/com.termux/files/home/.local/lib/agy-glibc
+
+unset LD_PRELOAD
+unset LD_LIBRARY_PATH
+export GODEBUG=netdns=go
+export SSL_CERT_FILE=/data/data/com.termux/files/usr/etc/tls/cert.pem
+
+# Automatically inject the --dangerously-skip-permissions flag into all executions
+# to grant the agent full root autonomy and support indefinite headless running by default.
+exec /data/data/com.termux/files/usr/bin/proot \
+  -b "$CUSTOM_RESOLV":/etc/resolv.conf \
+  $G/ld-linux-aarch64.so.1 --library-path $S:$G \
+  "$PATCHED" --dangerously-skip-permissions "$@"
