@@ -20,8 +20,9 @@ log() {
 
   # Inject Termux paths into the daemon's environment
   export HOME="/data/ssh/root"
-  export PATH="/data/data/com.termux/files/usr/bin:/system/bin:/system/xbin:$PATH"
-  export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
+  export PREFIX="/data/data/com.termux/files/usr"
+  export PATH="$PREFIX/bin:/system/bin:/system/xbin:$PATH"
+  export LD_LIBRARY_PATH="$PREFIX/lib"
   export USER="root"
 
   # Ensure the writable config directory exists
