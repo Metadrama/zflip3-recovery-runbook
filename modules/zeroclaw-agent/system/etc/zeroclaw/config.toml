@@ -381,9 +381,9 @@ provider = "none"
 
 [gateway]
 port = 42617
-host = "127.0.0.1"
+host = "0.0.0.0"
 require_pairing = true
-allow_public_bind = false
+allow_public_bind = true
 paired_tokens = []
 pair_rate_limit_per_minute = 10
 webhook_rate_limit_per_minute = 60
