@@ -56,5 +56,6 @@ build_one gemini-cli
 build_one selinux-permissive
 build_one disable-doze
 build_one scrcpy-hacks
+build_one openclaw-agent
 
 

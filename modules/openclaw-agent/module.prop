@@ -1,0 +1,6 @@
+id=openclaw-agent
+name=OpenClaw AI Agent Daemon
+version=v1.0.0
+versionCode=100
+author=Antigravity & Metadrama
+description=Autonomous 24/7 systemless OpenClaw AI agent daemon. Integrates system root commands, declarative JSON5 config, and Termux APIs systemlessly on boot.

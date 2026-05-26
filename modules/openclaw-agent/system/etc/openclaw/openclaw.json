@@ -1,0 +1,41 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/data/ssh/root/.openclaw/workspace"
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "1f439dd89f64fd5e48f1d6eb21f1d9a042fc08b59b98ab27"
+    },
+    "port": 18789,
+    "bind": "auto",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "npm"
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-05-26T15:12:26.302Z",
+    "lastRunVersion": "2026.5.22",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.5.22",
+    "lastTouchedAt": "2026-05-26T15:12:26.354Z"
+  }
+}
