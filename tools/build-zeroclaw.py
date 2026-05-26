@@ -6,6 +6,7 @@ import shutil
 import urllib.request
 import zipfile
 import stat
+import tarfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist")
@@ -44,19 +45,58 @@ def get_latest_release_url():
         print(f"Error querying GitHub API: {e}")
     return None, None
 
-def download_binary(download_url, dest_path):
+def download_binary(download_url, dest_path, asset_name):
     print(f"Downloading binary from {download_url}...")
+    temp_archive = dest_path + (".tar.gz" if asset_name.endswith(".tar.gz") else ".zip" if asset_name.endswith(".zip") else "")
+    
+    # If no archive format, just download directly
+    is_archive = temp_archive != dest_path
+    target_dl = temp_archive if is_archive else dest_path
+    
     try:
         req = urllib.request.Request(
             download_url, 
             headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         )
-        with urllib.request.urlopen(req, timeout=30) as response, open(dest_path, "wb") as out_file:
+        with urllib.request.urlopen(req, timeout=30) as response, open(target_dl, "wb") as out_file:
             shutil.copyfileobj(response, out_file)
         print("Download successful!")
+        
+        if is_archive:
+            print(f"Extracting binary from {asset_name}...")
+            if asset_name.endswith(".tar.gz"):
+                with tarfile.open(temp_archive, "r:gz") as tar:
+                    found = False
+                    for member in tar.getmembers():
+                        if member.name.endswith("zeroclaw") and member.isfile():
+                            print(f"Found binary in tarball: {member.name}")
+                            with tar.extractfile(member) as ext_f, open(dest_path, "wb") as out_f:
+                                shutil.copyfileobj(ext_f, out_f)
+                            found = True
+                            break
+                    if not found:
+                        raise Exception("Could not find 'zeroclaw' binary inside .tar.gz archive")
+            elif asset_name.endswith(".zip"):
+                with zipfile.ZipFile(temp_archive, "r") as zip_ref:
+                    found = False
+                    for name in zip_ref.namelist():
+                        if name.endswith("zeroclaw") and not name.endswith("/"):
+                            print(f"Found binary in zip: {name}")
+                            with zip_ref.open(name) as ext_f, open(dest_path, "wb") as out_f:
+                                shutil.copyfileobj(ext_f, out_f)
+                            found = True
+                            break
+                    if not found:
+                        raise Exception("Could not find 'zeroclaw' binary inside .zip archive")
+            
+            # Clean up temp archive
+            os.remove(temp_archive)
+            print("Extraction successful and temporary archive cleaned up!")
         return True
     except Exception as e:
-        print(f"Error downloading binary: {e}")
+        print(f"Error downloading or extracting binary: {e}")
+        if is_archive and os.path.exists(temp_archive):
+            os.remove(temp_archive)
         return False
 
 def zip_dir(dir_path, zip_path):
@@ -98,7 +138,7 @@ def main():
     else:
         download_url, asset_name = get_latest_release_url()
         if download_url:
-            has_bin = download_binary(download_url, target_bin)
+            has_bin = download_binary(download_url, target_bin, asset_name)
         
     if not has_bin:
         print("\n[WARNING] Could not fetch binary automatically.")
