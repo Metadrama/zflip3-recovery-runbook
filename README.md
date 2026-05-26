@@ -235,6 +235,57 @@ antigravity --help
 
 53. Once the AI infrastructure is authorized, continue the headless-server build: Tailscale, Termux or Debian chroot, Hermes/OpenClaw runtime, boot persistence, power management, and health checks.
 
+## Dual-Agent Setup: Running OpenClaw alongside ZeroClaw
+
+Both ZeroClaw and OpenClaw can coexist perfectly on the system without any conflicts. ZeroClaw uses `/data/ssh/root/.zeroclaw` and port `42617`, while OpenClaw uses `/data/ssh/root/.openclaw` and port `18789`.
+
+### 1. Install OpenClaw via Termux NPM
+Since Node.js and NPM are fully installed in the systemless Termux environment, install OpenClaw globally directly from your root SSH terminal:
+```bash
+npm install -g openclaw@latest
+```
+
+### 2. Static Configuration Setup (Bypassing Onboarding Wizards)
+To bypass dynamic OAuth redirection loops, create a static, declarative JSON5 configuration file at `/data/ssh/root/.openclaw/openclaw.json`:
+
+```json
+{
+  "schema_version": 2,
+  "providers": {
+    "fallback": "gemini",
+    "models": {
+      "gemini": {
+        "api_key": "YOUR_GEMINI_API_KEY_HERE",
+        "model": "gemini-1.5-flash"
+      },
+      "openai": {
+        "api_key": "YOUR_OPENAI_API_KEY_HERE",
+        "model": "gpt-4o-mini"
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "host": "0.0.0.0",
+    "allow_public_bind": true
+  },
+  "autonomy": {
+    "level": "supervised",
+    "workspace_only": true
+  }
+}
+```
+
+### 3. Run or Control the OpenClaw Daemon
+Run the OpenClaw service on-demand or start the background gateway daemon:
+```bash
+# Start interactive agent session
+openclaw agent
+
+# Start background gateway
+openclaw gateway start
+```
+
 ## Appendices
 
 [*1] CSC choice is destructive. HOME_CSC preserves /data. CSC wipes /data. Use CSC only when the wipe is part of the plan.
