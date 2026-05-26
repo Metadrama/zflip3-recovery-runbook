@@ -1,8 +1,9 @@
 # ZeroClaw AI Agent Daemon Configuration
 
+allowed_users = ["root"]
+
 [agent]
 name = "ZFlip3-Headless-Agent"
-allowed_users = ["root"]
 workspace = "/data/data/com.termux/files/home/zeroclaw-workspace"
 allowed_commands = ["go-admin", "go-server", "cmd", "dumpsys", "df", "ip", "ping"]
 
