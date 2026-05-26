@@ -19,13 +19,13 @@ log() {
   log "Boot completed. Starting ZeroClaw..."
 
   # Inject Termux paths into the daemon's environment
-  export HOME="/data/data/com.termux/files/home"
+  export HOME="/data/ssh/root"
   export PATH="/data/data/com.termux/files/usr/bin:/system/bin:/system/xbin:$PATH"
   export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
   export USER="root"
 
   # Ensure the writable config directory exists
-  CONFIG_DIR="$HOME/.config/zeroclaw"
+  CONFIG_DIR="$HOME/.zeroclaw"
   mkdir -p "$CONFIG_DIR"
 
   # Copy the default config.toml if it does not already exist in the writable folder
@@ -33,7 +33,6 @@ log() {
   if [ ! -f "$CONFIG_DIR/config.toml" ]; then
     cp /system/etc/zeroclaw/config.toml "$CONFIG_DIR/config.toml"
     chmod 600 "$CONFIG_DIR/config.toml"
-    chown -R u0_a315:u0_a315 "$HOME/.config"
     log "Initialized default config.toml in $CONFIG_DIR"
   fi
 
