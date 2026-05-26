@@ -13,7 +13,7 @@ WORK = os.path.join(ROOT, ".build", "zeroclaw-zip")
 MODULE_SRC = os.path.join(ROOT, "modules", "zeroclaw-agent")
 OUT_ZIP = os.path.join(DIST, "zeroclaw-agent-twrp.zip")
 
-GITHUB_REPO = "zeroclaw/zeroclaw"
+GITHUB_REPO = "zeroclaw-labs/zeroclaw"
 
 def get_latest_release_url():
     url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
