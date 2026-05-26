@@ -25,6 +25,6 @@ log() {
   export USER="root"
 
   # Launch ZeroClaw as a background daemon
-  /system/bin/zeroclaw --config /system/etc/zeroclaw/config.toml >> "$MODDIR/daemon.log" 2>&1 &
+  /system/bin/zeroclaw --config-dir /system/etc/zeroclaw daemon >> "$MODDIR/daemon.log" 2>&1 &
   log "ZeroClaw Daemon successfully launched in background (PID: $!)"
 ) &
