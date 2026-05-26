@@ -1,0 +1,19 @@
+# ZeroClaw AI Agent Daemon Configuration
+
+[agent]
+name = "ZFlip3-Headless-Agent"
+workspace = "/data/data/com.termux/files/home/zeroclaw-workspace"
+allowed_commands = ["go-admin", "go-server", "cmd", "dumpsys", "df", "ip", "ping"]
+
+[llm]
+provider = "gemini" # Options: gemini, openai, anthropic
+model = "gemini-1.5-flash"
+api_key = "YOUR_GEMINI_API_KEY_HERE"
+
+[channels.telegram]
+enabled = true
+bot_token = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+allowed_chat_ids = [] # List of telegram chat IDs allowed to issue commands, e.g. [12345678]
+
+[memory]
+database_path = "/data/data/com.termux/files/home/zeroclaw-workspace/memory.db"
