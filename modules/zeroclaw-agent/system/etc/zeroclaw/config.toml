@@ -11,7 +11,7 @@ max_tokens = 4096
 temperature = 0.7
 timeout_secs = 120
 wire_api = "chat_completions"
-api_key = "enc2:196be88215caead61d9643049f232021308345616dc1aba484d95d34af5ed14d70a26791"
+api_key = "YOUR_GEMINI_API_KEY_HERE"
 model = "gemini-1.5-flash"
 
 [observability]
