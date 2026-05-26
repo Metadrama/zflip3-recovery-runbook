@@ -1,0 +1,5 @@
+# Force shell scripts and executable wrappers to always use LF line endings, preventing Windows CRLF auto-conversion
+*.sh text eol=lf
+modules/scrcpy-hacks/system/bin/* text eol=lf
+tools/termux/agy-va39 text eol=lf
+tools/termux/*.py text eol=lf
